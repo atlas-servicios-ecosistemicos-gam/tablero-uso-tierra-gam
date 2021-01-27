@@ -71,7 +71,9 @@ pal <- colorFactor(
 Column {data-width=500}
 -----------------------------------------------------------------------
 
-###
+### Fuente: Imágenes del sensor Sentinel 2B (Agencia Espacial Europea) {data-height=10}
+
+### {data-height=990}
 ```{r}
 
 leaflet() %>%
