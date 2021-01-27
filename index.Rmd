@@ -170,8 +170,8 @@ fig <- plot_ly(datos,
                marker = list(
                  colors = c(
                    rgb(145,172,128,maxColorValue=255), rgb(2,217,214,  maxColorValue=255),
-                   rgb(249,216,87, maxColorValue=255), rgb(0,204,242,  maxColorValue=255),
-                   rgb(255,252,138,maxColorValue=255)
+                   rgb(255,252,138,maxColorValue=255), rgb(249,216,87, maxColorValue=255),
+                   rgb(0,204,242,  maxColorValue=255)
                  )
                ),
                type = 'pie')
