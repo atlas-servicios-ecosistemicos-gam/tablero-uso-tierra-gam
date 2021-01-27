@@ -1,0 +1,186 @@
+---
+title: "Uso de la tierra en la Gran Área Metropolitana, 2020"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+---
+
+```{r setup, include=FALSE}
+#-------------------- Paquetes --------------------
+
+library(flexdashboard)
+library(dplyr)
+library(sf)
+library(leaflet)
+library(leafem)
+library(esri2sf)
+library(raster)
+library(plotly)
+
+#--------- URL de geoservicios y datos ------------
+
+url_agfs_limite_gam <-
+  "https://services9.arcgis.com/RrvMEynxDB8hycVO/arcgis/rest/services/gam_limite_gam/FeatureServer/0"
+
+url_raster_uso_tierra <-
+  "https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos-uso-tierra/master/gam/USO_COBERTURA_GAM_WEB.tif"
+
+#---------------- Objetos sf y raster -----------------
+
+# Límite de la GAM
+sf_limite_gam <- 
+  esri2sf(url_agfs_limite_gam)
+
+# Límite de la GAM (reproyectada a Web Mercator)
+sf_limite_gam_web <- 
+  sf_limite_gam %>%
+  st_transform(3857)
+
+# Capa raster de uso de la tierra (en Web Mercator)
+raster_uso_tierra <-
+  raster(url_raster_uso_tierra) %>%
+  crop(sf_limite_gam_web) %>%
+  mask(sf_limite_gam_web)
+
+#---------------- Paletas de colores ---------------
+
+colores_uso_tierra <- 
+  c(rgb(2,217,214,  maxColorValue=255), rgb(0,204,242,  maxColorValue=255), 
+    rgb(145,172,128,maxColorValue=255), rgb(106,142,88, maxColorValue=255),
+    rgb(125,106,69, maxColorValue=255), rgb(88,54,51,   maxColorValue=255),
+    rgb(249,216,87, maxColorValue=255), rgb(255,252,138,maxColorValue=255)
+  )
+
+etiquetas_uso_tierra <- 
+  c("Zonas urbanas continuas y discontinuas", "Aguas continentales", 
+    "Bosque secundario temprano", "Bosque secundario medio y tardío",
+    "Café", "Fresas, flores y ornamentales", 
+    "Hortalizas, raíces y tubérculos", "Pastos con árboles y limpios"
+  )
+
+values_uso_tierra <- c(1, 2, 3, 4, 5, 6, 7, 8)
+
+pal <- colorFactor(
+  palette = colores_uso_tierra, 
+  domain = values_uso_tierra,
+  na.color = "transparent"
+)
+
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+###
+```{r}
+
+leaflet() %>%
+  addProviderTiles(providers$OpenStreetMap.Mapnik, group = "OpenStreetMap") %>%
+  addProviderTiles(providers$Stamen.TonerLite, group = "Stamen Toner Lite") %>%
+  addProviderTiles(providers$CartoDB.DarkMatter, group = "CartoDB Dark Matter") %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "Imágenes de ESRI") %>%
+  addPolygons(
+    data = sf_limite_gam,
+    color = "Purple",
+    fillColor = "transparent",
+    stroke = TRUE,
+    weight = 6.0,
+    group = "Límite de la GAM"
+  ) %>%
+  addRasterImage(
+    raster_uso_tierra, 
+    colors = pal, 
+    opacity = 1,
+    group = "Uso de la tierra"
+  ) %>%
+  addLegend(
+    title = "Uso de la tierra", 
+    position = "bottomright",
+    colors = colores_uso_tierra, 
+    labels = etiquetas_uso_tierra,
+    group = "Uso de la tierra"
+  ) %>%
+  addLayersControl(
+    baseGroups = c("OpenStreetMap", "Stamen Toner Lite", "CartoDB Dark Matter", "Imágenes de ESRI"),
+    overlayGroups = c("Límite de la GAM", "Uso de la tierra"),
+    options = layersControlOptions(collapsed = TRUE)    
+  ) %>%  
+  addMiniMap(
+    toggleDisplay = TRUE,
+    position = "bottomleft",
+    tiles = providers$OpenStreetMap.Mapnik
+  ) %>%
+  addScaleBar(
+    position = "bottomleft",
+    options = scaleBarOptions(imperial = FALSE)
+  ) %>%
+  addMouseCoordinates()
+
+```
+
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+### {data-height=300}
+```{r}
+
+# Vector de nombres de sitios con superficies
+sitios <- 
+  c("Superficie total de la GAM (ha)", "Superficie de áreas silvestres protegidas (ASP) (ha)", 
+    "Superficie de tierra cultivada (ha)", "Superficie de humedales (ha)")
+
+# Vector de superficies
+superficies <- 
+  c(177.711, 24.468, 
+    22.250, 399)
+
+sitios_superficies <- 
+  data.frame(
+    sitio = sitios, 
+    superficie = superficies
+  )
+
+sitios_superficies %>%
+DT::datatable(
+  colnames = NULL,
+  rownames = FALSE,
+  options = list(pageLength = 15, dom = 't')
+)
+```
+
+### {data-height=700}
+```{r}
+
+# Vector de categorias de uso de la tierra
+categorias <- c("Bosque", "Urbano", "Pastos", "Agricultura", "Humedales")
+
+# Vector de valores
+valores <- c(48.2, 21.8, 17.3, 12.5, 0.2)
+categorias_uso <- 
+  data.frame(
+    categoria = categorias, 
+    valor = valores
+  )
+
+datos <- categorias_uso[,c('categoria', 'valor')]
+
+fig <- plot_ly(datos, 
+               labels = ~categorias, 
+               values = ~valores, 
+               marker = list(
+                 colors = c(
+                   rgb(145,172,128,maxColorValue=255), rgb(2,217,214,  maxColorValue=255),
+                   rgb(249,216,87, maxColorValue=255), rgb(0,204,242,  maxColorValue=255),
+                   rgb(255,252,138,maxColorValue=255)
+                 )
+               ),
+               type = 'pie')
+
+fig <- fig %>% layout(title = 'Uso de la tierra',
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+```
+
+
