@@ -45,10 +45,10 @@ raster_uso_tierra <-
 #---------------- Paletas de colores ---------------
 
 colores_uso_tierra <- 
-  c(rgb(2,217,214,  maxColorValue=255), rgb(0,204,242,  maxColorValue=255), 
-    rgb(145,172,128,maxColorValue=255), rgb(106,142,88, maxColorValue=255),
-    rgb(125,106,69, maxColorValue=255), rgb(88,54,51,   maxColorValue=255),
-    rgb(249,216,87, maxColorValue=255), rgb(255,252,138,maxColorValue=255)
+  c(rgb(236,243,228,maxColorValue=255), rgb(178,209,225,maxColorValue=255), 
+    rgb(52,130,100, maxColorValue=255), rgb(43,99,89,   maxColorValue=255),
+    rgb(122,173,111,maxColorValue=255), rgb(169,183,107,maxColorValue=255),
+    rgb(49,129,117, maxColorValue=255), rgb(69,155,122, maxColorValue=255)
   )
 
 etiquetas_uso_tierra <- 
@@ -171,9 +171,9 @@ fig <- plot_ly(datos,
                values = ~valores, 
                marker = list(
                  colors = c(
-                   rgb(145,172,128,maxColorValue=255), rgb(2,217,214,  maxColorValue=255),
-                   rgb(255,252,138,maxColorValue=255), rgb(249,216,87, maxColorValue=255),
-                   rgb(0,204,242,  maxColorValue=255)
+                   rgb(43,99,89,   maxColorValue=255), rgb(236,243,228,maxColorValue=255),
+                   rgb(69,155,122, maxColorValue=255), rgb(49,129,117, maxColorValue=255),
+                   rgb(178,209,225,maxColorValue=255)
                  )
                ),
                type = 'pie')
