@@ -12,6 +12,8 @@ library(flexdashboard)
 library(dplyr)
 library(sf)
 library(leaflet)
+library(leaflet.extras)
+library(leaflet.opacity)
 library(leafem)
 library(esri2sf)
 library(raster)
@@ -46,9 +48,9 @@ raster_uso_tierra <-
 
 colores_uso_tierra <- 
   c(rgb(236,243,228,maxColorValue=255), rgb(178,209,225,maxColorValue=255), 
-    rgb(52,130,100, maxColorValue=255), rgb(43,99,89,   maxColorValue=255),
-    rgb(122,173,111,maxColorValue=255), rgb(169,183,107,maxColorValue=255),
-    rgb(49,129,117, maxColorValue=255), rgb(69,155,122, maxColorValue=255)
+    rgb(110,186,148,maxColorValue=255), rgb(43,99,89,   maxColorValue=255),
+    rgb(153,96,83,  maxColorValue=255), rgb(239,147,111,maxColorValue=255),
+    rgb(226,217,109,maxColorValue=255), rgb(177,207,177,maxColorValue=255)
   )
 
 etiquetas_uso_tierra <- 
@@ -91,6 +93,7 @@ leaflet() %>%
   ) %>%
   addRasterImage(
     raster_uso_tierra, 
+    layerId = "raster",
     colors = pal, 
     opacity = 1,
     group = "Uso de la tierra"
@@ -99,6 +102,7 @@ leaflet() %>%
     title = "Uso de la tierra", 
     position = "bottomright",
     colors = colores_uso_tierra, 
+    opacity = 1,
     labels = etiquetas_uso_tierra,
     group = "Uso de la tierra"
   ) %>%
@@ -116,7 +120,10 @@ leaflet() %>%
     position = "bottomleft",
     options = scaleBarOptions(imperial = FALSE)
   ) %>%
-  addMouseCoordinates()
+  addMouseCoordinates() %>%
+  addSearchOSM() %>%
+  addResetMapButton() %>%
+  addOpacitySlider(layerId = "raster")
 
 ```
 
@@ -172,7 +179,7 @@ fig <- plot_ly(datos,
                marker = list(
                  colors = c(
                    rgb(43,99,89,   maxColorValue=255), rgb(236,243,228,maxColorValue=255),
-                   rgb(69,155,122, maxColorValue=255), rgb(49,129,117, maxColorValue=255),
+                   rgb(177,207,177,maxColorValue=255), rgb(226,217,109,maxColorValue=255),
                    rgb(178,209,225,maxColorValue=255)
                  )
                ),
