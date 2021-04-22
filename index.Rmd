@@ -48,7 +48,7 @@ raster_uso_tierra <-
 
 colores_uso_tierra <- 
   c(rgb(236,243,228,maxColorValue=255), rgb(178,209,225,maxColorValue=255), 
-    rgb(110,186,148,maxColorValue=255), rgb(43,99,89,   maxColorValue=255),
+    rgb(43,99,89,   maxColorValue=255), rgb(110,186,148,maxColorValue=255),
     rgb(153,96,83,  maxColorValue=255), rgb(239,147,111,maxColorValue=255),
     rgb(226,217,109,maxColorValue=255), rgb(177,207,177,maxColorValue=255)
   )
