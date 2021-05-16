@@ -1,5 +1,5 @@
 ---
-title: "Uso de la tierra en la Gran Área Metropolitana, 2020"
+title: "Uso de la tierra en la Gran Área Metropolitana"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
